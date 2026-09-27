@@ -1,0 +1,11 @@
+[package]
+name = "ivc-theme"
+version = "0.1.0"
+entrypoint = "lib/lib.typ"
+authors = ["Peter Waldert <peter@waldert.at>", "Benedikt Kantz <benedikt.kantz@tugraz.at>"]
+license = "MIT"
+description = "Slides and posters for the Institute of Visual Computing, TU Graz."
+keywords = ["IVC", "TU Graz", "Graz University Of Technology", "Touying", "Poster"]
+categories = ["presentation", "poster"]
+compiler = "0.15.0"
+exclude = ["examples/", "Makefile"]
