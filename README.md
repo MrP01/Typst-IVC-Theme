@@ -23,6 +23,11 @@ for the [Institute of Visual Computing (IVC)](https://ivc.tugraz.at), Graz Unive
 Hello!
 ```
 
+For two-line slide titles, give the header more room with `ivc-theme.with(header-title-height: 4em, header-title-size: 1.3em, ..)`.
+`header-aside[..]` in a slide's body puts content right of that slide's title.
+
+Open projects: `#title-slide-open-projects(area: .., image_person: ..)`, then `#project-type("B", "S", "M")` on each topic slide to show which of Bachelor's Thesis, Seminar Project and Master's Thesis it is offered as.
+
 Poster:
 
 ```typ

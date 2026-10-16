@@ -1,6 +1,6 @@
 #import "definitions.typ": *
 #import "ivc-presentation.typ": *
-#import "ivc-open-projects.typ": title-slide-open-projects
+#import "ivc-open-projects.typ": title-slide-open-projects, project-type
 #import "ivc-poster.typ": placard, card
 
 // submodules: #import "@preview/ivc-theme:0.1.0": poster, presentation, open-projects

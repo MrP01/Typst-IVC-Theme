@@ -149,7 +149,7 @@
     layout(size => block(fill: white, width: 100%, height: 100%, {
       grid(
         columns: (margin_left, size.width - margin_left - margin_right, margin_right),
-        rows: (header_depth, header_title_size),
+        rows: (header_depth, self.store.header-title-height),
         [],
         cetz.canvas({
           import cetz.draw: *
@@ -196,16 +196,21 @@
             utils.slide-counter.display()
           }))
         }),
-        block({
-          set align(horizon + center)
-          set text(size: 1.5em, fill: black, weight: "extrabold")
-          v(0.4em)
-          if self.store.title != none {
-            utils.call-or-display(self, self.store.title)
-          } else {
-            utils.display-current-heading(level: 2)
-          }
-        }),
+        grid(
+          columns: (1fr, auto),
+          align: (left + top, right + horizon),
+          block({
+            set text(size: self.store.header-title-size, fill: black, weight: "extrabold")
+            v(0.4em)
+            if self.store.title != none {
+              utils.call-or-display(self, self.store.title)
+            } else {
+              utils.display-current-heading(level: 2)
+            }
+          }),
+          // per-slide content for the right of the title, see header-aside()
+          context query(<ivc-header-aside>).filter(m => m.location().page() == here().page()).map(m => m.value).join(),
+        ),
       )
     }))
   }
@@ -280,13 +285,23 @@
   set text(fill: self.colors.neutral-lightest, size: 2em)
   touying-slide(self: self, align(horizon + center, body))
 })
-#let ivc-theme(aspect-ratio: "16-9", footer: none, ..args, body) = {
+// Content shown right of the current slide's title, in the header.
+#let header-aside(body) = [#metadata(body)<ivc-header-aside>]
+
+#let ivc-theme(
+  aspect-ratio: "16-9",
+  footer: none,
+  header-title-height: header_title_size,
+  header-title-size: 1.5em,
+  ..args,
+  body,
+) = {
   set text(size: 20pt)
 
   show: touying-slides.with(
     config-page(
       paper: "presentation-" + aspect-ratio,
-      margin: (top: header_depth + header_title_size + 1em, bottom: footer_depth, x: 2em),
+      margin: (top: header_depth + header-title-height + 1em, bottom: footer_depth, x: 2em),
     ),
     config-common(
       slide-fn: slide,
@@ -304,6 +319,8 @@
       author: none,
       short-author: none,
       email: "your.mail@tugraz.at",
+      header-title-height: header-title-height,
+      header-title-size: header-title-size,
     ),
     ..args,
   )

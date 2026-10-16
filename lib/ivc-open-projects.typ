@@ -1,5 +1,20 @@
 #import "@preview/touying:0.7.4": *
 #import "@preview/cetz:0.5.2"
+#import "ivc-presentation.typ": header-aside
+
+// Thesis types a topic is offered as, shown right of the slide title, e.g. #project-type("B", "M").
+#let project-type(..types) = header-aside(
+  {
+    v(0.4em)
+    set text(size: 1.1em)
+    set par(leading: 0.35em)
+    (("B", "Bachelor's Thesis"), ("S", "Seminar Project"), ("M", "Master's Thesis"))
+    .map(
+      ((key, name)) => text(fill: if key in types.pos() { gray.darken(50%) } else { gray.lighten(50%) }, smallcaps(name)),
+    )
+    .join(linebreak())
+  },
+)
 
 #let title-slide-open-projects(..args, image_person: none, area: "Visual Computing") = touying-slide-wrapper(
   self => {
@@ -17,7 +32,7 @@
               import cetz.draw: circle, content, line, rect
               content(
                 (0, 0),
-                block(image("assets/16b_tug_building-min.jpg", width: size.width + 0.1em, fit: "cover")),
+                block(image("assets/16b_tug_building-min.jpg", width: size.width + 0.1em, height: size.height, fit: "cover")),
                 name: "background",
               )
 
@@ -34,7 +49,7 @@
                     rows: auto,
                     block(
                       {
-                        if type(image_person) == content { image_person } else if image_person != none { image(image_person, width: 5em, fit: "cover") }
+                        if type(image_person) == content { image_person } else if image_person != none { image(image_person, width: 8em, fit: "cover") }
                       },
                     ),
                     grid(columns: (auto, auto), rows: auto, gutter: 1em, [Advisor:], {
