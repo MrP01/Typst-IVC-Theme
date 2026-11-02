@@ -26,3 +26,4 @@ uninstall:
 examples:
 	typst compile --root . examples/presentation.typ
 	typst compile --root . examples/poster.typ
+	for f in seminar-report bachelor-thesis master-thesis phd-thesis; do typst compile --root . examples/$$f.typ; done
