@@ -8,7 +8,7 @@
 //
 // Each template only states what it adds or changes and passes everything else on,
 // so the user's arguments always win.
-#import "definitions.typ": ivc-color, tug-color
+#import "definitions.typ": ivc-color, link-color, tug-color
 #import "ivc-thesis-macros.typ": in-outline, keywords-line, small-heading, thesis-outline
 
 #let _chapters = state("ivc-thesis-chapters", false) // level-1 headings are chapters
@@ -218,6 +218,7 @@
   set text(size: 11pt)
   set par(justify: true, leading: 0.6em, spacing: 0.6em, first-line-indent: 1.2em)
   set list(marker: text(fill: ivc-color)[•])
+  show link: it => if type(it.dest) == str { text(fill: link-color, it) } else { it } // URLs; refs, cites, outlines stay
 
   set heading(numbering: "1.1")
   show heading.where(level: 5): set heading(numbering: none, outlined: false) // \paragraph
@@ -231,6 +232,7 @@
   show heading.where(level: 1): it => if o.chapters { (o.chapter-heading)(it) } else { it }
 
   set figure(numbering: figure-number)
+  show figure.where(placement: none): set block(spacing: 1.6em)
   set math.equation(numbering: n => [(#figure-number(n))])
   show figure.caption: it => align(center, box(align(left, if it.numbering == none { it.body } else [
     #text(weight: "bold", fill: ivc-color)[#it.supplement~#it.counter.display(it.numbering)#it.separator]#it.body
