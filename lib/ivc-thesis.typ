@@ -36,6 +36,8 @@
 // ---------------------------------------------------------------------------
 // Title pages and front matter
 
+#let _blank-page = page(header: none, footer: none)[] // for blank-pages: true
+
 #let report-title(o) = {
   _logos(1.2cm)
   v(1.5cm)
@@ -116,8 +118,10 @@
     ([Kurzfassung], if kurz != none { text(lang: "de", kurz) }, [Schlagwörter], o.at("keywords-de", default: ())),
   ) {
     if body != none { heading(title) + body + keywords-line(kw-title, kws) }
+    if body != none and title == [Abstract] and o.blank-pages { _blank-page }
   }
   thesis-outline()
+  if o.blank-pages { _blank-page }
 }
 
 // lists of figures/tables/listings switched on by list-of-figures, list-of-tables, list-of-listings:
@@ -179,6 +183,8 @@
 
 // Seminar report, and the base of the theses below.
 // Info: title, subtitle, author (see _authors), supervisors, institute, date, kind, abstract, keywords (strings).
+// Layout: line-spacing (factor, like \linespread), blank-pages (an empty page after the title page, abstract,
+// contents and every chapter).
 // Hooks for derived templates: title-page(o), front-matter(o) (roman page numbers), chapters, chapter-heading(it).
 #let report(..args) = {
   let o = (
@@ -195,6 +201,8 @@
     front-matter: none,
     chapters: false,
     chapter-heading: chapter-heading,
+    line-spacing: 1,
+    blank-pages: false,
   ) + args.named()
 
   set document(title: o.title, author: _author-names(o), keywords: o.keywords)
@@ -216,7 +224,9 @@
     ))),
   )
   set text(size: 11pt)
-  set par(justify: true, leading: 0.6em, spacing: 0.6em, first-line-indent: 1.2em)
+  // 1.26em is the baseline distance at line-spacing 1 (0.6em leading + the cap height of the font)
+  let leading = 0.6em + (o.line-spacing - 1) * 1.26em
+  set par(justify: true, leading: leading, spacing: leading, first-line-indent: 1.2em)
   set list(marker: text(fill: ivc-color)[•])
   show link: it => if type(it.dest) == str { text(fill: link-color, it) } else { it } // URLs; refs, cites, outlines stay
 
@@ -229,7 +239,13 @@
     block(above: 1.6em, below: 0.9em, sticky: true, text(size: size, weight: "bold", num + it.body))
   }
   show heading.where(level: 1): set heading(supplement: if o.chapters [Chapter] else { auto })
-  show heading.where(level: 1): it => if o.chapters { (o.chapter-heading)(it) } else { it }
+  show heading.where(level: 1): it => if o.chapters {
+    if o.blank-pages {
+      let prev = query(heading.where(level: 1).before(here(), inclusive: false))
+      if prev.len() > 0 and prev.last().numbering != none { _blank-page } // after a chapter
+    }
+    (o.chapter-heading)(it)
+  } else { it }
 
   set figure(numbering: figure-number)
   show figure.where(placement: none): set block(spacing: 1.6em)
@@ -243,6 +259,7 @@
   _chapters.update(o.chapters)
   _lists.update(_list-kinds.filter(((key, ..)) => o.at(key, default: false)).map(((_, title, kind)) => (title, kind)))
   (o.title-page)(o)
+  if o.blank-pages { _blank-page }
   if o.front-matter != none {
     set page(numbering: "i")
     counter(page).update(1)
